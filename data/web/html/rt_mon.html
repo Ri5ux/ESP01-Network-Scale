@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+    <title>Network Scale | Realtime Monitor</title>
+    <link href="./client/rt_mon.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="info"><b id="ScaleWeight">100.27</b><b> LBs</b></div>
+</body>
+<script>
+    function httpGet(theUrl)
+    {
+      var xmlHttp = null;
+    
+      xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "GET", theUrl, false );
+      xmlHttp.send( null );
+      return xmlHttp.responseText;
+    }
+
+    var scaleWeight = document.getElementById("ScaleWeight");
+
+    setInterval(function(){
+        scaleWeight.innerHTML = Number(httpGet("http://%ESPVAL_IP%/scale_weight"));
+    }, 250);
+</script>

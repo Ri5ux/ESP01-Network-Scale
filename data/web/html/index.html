@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Network Scale</title>
+        <link href="./client/style.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="sidebar">
+                %ESPVAL_HTML_NAVIGATION%
+            </div>
+            <div id="content">
+                <h1>ESP8266 Wireless Network Scale</h1>
+                <h3>Realtime Scale Variables</h3>
+                <table>
+                    <tr><td class="key">Weight</td><td class="value" id="ScaleWeight"></td></tr>
+                    <tr><td class="key">Calibration Offset</td><td class="value" id="CalibrationOffset"></td></tr>
+                </table>
+                <h3>Additional Scale Variables</h3>
+                <table>
+                    <tr><td class="key">Zero Factor</td><td class="value">%ESPVAL_ZEROFACTOR%</td></tr>
+                </table>
+            </div>
+        </div>
+    </body>
+    <script>
+        function httpGet(theUrl)
+        {
+          var xmlHttp = null;
+        
+          xmlHttp = new XMLHttpRequest();
+          xmlHttp.open( "GET", theUrl, false );
+          xmlHttp.send( null );
+          return xmlHttp.responseText;
+        }
+
+        var scaleWeight = document.getElementById("ScaleWeight");
+        var scaleCalibration = document.getElementById("CalibrationOffset");
+
+        setInterval(function(){
+            scaleWeight.innerHTML = Number(httpGet("http://%ESPVAL_IP%/scale_weight"));
+            scaleCalibration.innerHTML = Number(httpGet("http://%ESPVAL_IP%/scale_calibration"));
+        }, 250);
+    </script>
+</html>
