@@ -19,7 +19,7 @@ body {
     margin: 0px;
     -webkit-font-smoothing: antialiased;
 }
-.info {
+#Readout {
     color: #AAAAAA;
     font-family: Arial;
     text-align: center;
@@ -28,12 +28,80 @@ body {
     transform: translateY(-50%);
     max-width: 100%;
     margin: auto;
+    font-family: 'digital-7regular', System;
+    color: #00CCFF;
 }
-.info b {
+#Readout b {
     padding: 10px;
     font-size: 175px;
     font-weight: 100;
-    font-family: 'digital-7regular', System;
-    color: #00CCFF;
     display: inline;
+}
+.subInfo {
+    font-size: 60px;
+}
+.indicators {
+    font-size: 24px;
+}
+#ScaleIndicators {
+}
+.i {
+    display: inline;
+}
+#ColorSelector {
+    margin: 0px;
+    padding: 5px;
+    display: inline-block;
+}
+#ColorSelector li {
+    display: inline-block;
+}
+.selectableColor {
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    border: 1px solid #000000;
+    -webkit-transition : all 0.25s ease-out;
+    -moz-transition : all 0.25s ease-out;
+    -o-transition : all 0.25s ease-out;
+    transition : all 0.25s ease-out;
+}
+.selectableColor:hover {
+    border: 1px solid #FFFFFF;
+}
+#Footer {
+    bottom: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    font-family: "Segoe UI", Arial;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.2);
+}
+#ButtonPanel {
+    display: inline-block;
+    height: 26px;
+    padding: 5px 4px 4px 4px;
+    margin: 0px;
+    vertical-align: top;
+}
+#ButtonPanel button {
+    height: 22px;
+    color: #AAAAAA;
+}
+button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+}
+button:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+button:active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+#Copyright {
+    padding: 8px 0px;
+    background-color: rgba(255, 255, 255, 0.1);
 }
