@@ -157,8 +157,11 @@ void startScale() {
 /** Web Server **/
 
 void startWebServer() {
-  server.serveStatic("/", SPIFFS, "/web/html").setDefaultFile("index.html").setTemplateProcessor(processor);
   server.serveStatic("/client", SPIFFS, "/web/client");
+  server.serveStatic("/index.html", SPIFFS, "/web/index.html").setTemplateProcessor(processor);
+  server.serveStatic("/navigation.html", SPIFFS, "/web/navigation.html").setTemplateProcessor(processor);
+  server.serveStatic("/network.html", SPIFFS, "/web/network.html").setTemplateProcessor(processor);
+  server.serveStatic("/rt_mon.html", SPIFFS, "/web/rt_mon.html").setTemplateProcessor(processor);
   
   server.on("/wireless_signal", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", String(WiFi.RSSI()));

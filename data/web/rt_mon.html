@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+    <title>Network Scale | Realtime Monitor</title>
+    <link href="./client/rt_mon.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div id="Readout">
+        <b id="ScaleWeight"></b><b> LBs</b>
+        <div class="subInfo">
+            <div class="i" id="ScaleWeightOunces"></div><div class="i"> oz.</div><div class="i"></div>
+        </div>
+        <div class="indicators">
+            <div class="i" id="ScaleIndicators"></div>
+        </div>
+    </div>
+    <div id="Footer">
+        <ul id="ColorSelector">
+            <li><div class="selectableColor" style="background-color: #FF1133;" onclick="colorSelected('#FF1133')"></div></li>
+            <li><div class="selectableColor" style="background-color: orange;" onclick="colorSelected('orange')"></div></li>
+            <li><div class="selectableColor" style="background-color: yellow;" onclick="colorSelected('yellow')"></div></li>
+            <li><div class="selectableColor" style="background-color: greenyellow;" onclick="colorSelected('greenyellow')"></div></li>
+            <li><div class="selectableColor" style="background-color: aqua;" onclick="colorSelected('aqua')"></div></li>
+            <li><div class="selectableColor" style="background-color: #00CCFF;" onclick="colorSelected('#00CCFF')"></div></li>
+            <li><div class="selectableColor" style="background-color: mediumslateblue;" onclick="colorSelected('mediumslateblue')"></div></li>
+            <li><div class="selectableColor" style="background-color: magenta;" onclick="colorSelected('magenta')"></div></li>
+            <li><div class="selectableColor" style="background-color: gray;" onclick="colorSelected('gray')"></div></li>
+            <li><div class="selectableColor" style="background-color: whitesmoke;" onclick="colorSelected('whitesmoke')"></div></li>
+        </ul>
+        <div id="ButtonPanel">
+            <button id="GoDark" onclick="goDark()">Go Dark</button>
+            <button id="Hold" onclick="manualHold()">Hold</button>
+            <button id="AutoHold" onclick="toggleAutoHold()">Auto Hold</button>
+        </div>
+        <div id="Copyright">Wireless Network Scale - Copyright &copy; 2019 ASX Electronics. Designed and built by Dustin Christensen</div>
+    </div>
+</body>
+<script>
+    var url = "http://%ESPVAL_IP%/scale_weight";
+</script>
+<script src="./client/util.js"></script>
+<script src="./client/monitor.js"></script>
