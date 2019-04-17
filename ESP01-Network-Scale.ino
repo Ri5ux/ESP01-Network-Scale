@@ -188,7 +188,7 @@ String processor(const String& var)
   if(var == "ESPVAL_BSSID"){ return String(WiFi.BSSIDstr()); }
   if(var == "ESPVAL_SSID"){ return String(WiFi.SSID().c_str()); }
   if(var == "ESPVAL_HTML_NAVIGATION"){
-    String data = readFile("/web/html/navigation.html");
+    String data = readFile("/web/navigation.html");
     data.replace("%ESP_IP%", WiFi.localIP().toString().c_str());
     
     return data;
