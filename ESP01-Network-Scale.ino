@@ -11,6 +11,9 @@
 #include <SPIFFSEditor.h>
 #include <FS.h>
 
+/** Requires version 5 **/
+#include <ArduinoJson.h> 
+
 #include <HX711.h>
 #include <Wire.h>
 
@@ -18,6 +21,8 @@ int connectionTime = 0;
 File file;
 char mac[18];
 boolean tryConnection = false;
+
+const char *configFilePath = "/wns.cfg";
 
 String ssid = "";
 String pswd = "";
@@ -27,19 +32,24 @@ AsyncWebServer server(80);
 const int LOADCELL_DATA_PIN = 12;
 const int LOADCELL_CLK_PIN = 14;
 HX711 scale;
-float calibration_factor = -5480;
+int calibration_factor = -5480;
 float scaleValue;
 long zero_factor;
+boolean calibrationMode = false;
 
 void setup() {
   Serial.begin(74880);
-  Serial.println("ESP-01 Scale");
+  Serial.println("Wireless Network Scale Firmware Version 1.0");
+  Serial.println("Copyright(C) 2019 ASX Electronics");
+  Serial.println("Designed and buily by Dustin Christensen");
+  Serial.println();
 
   if(!SPIFFS.begin()){
     Serial.println("An Error has occurred while mounting serial peripheral interface flash file system(SPIFFS).");
     return;
   }
-  
+
+  loadConfiguration();
   setMAC();
   Serial.print("MAC: ");
   Serial.println(mac);
@@ -57,22 +67,91 @@ void setup() {
   }
 }
 
-void loop() {
-  scale.set_scale(calibration_factor);
-  scaleValue = scale.get_units() + 0.07F;
-    
-  if(Serial.available())
+void loadConfiguration()
+{
+  Serial.print("Loading configuration file: ");
+  Serial.println(configFilePath);
+  
+  if (SPIFFS.exists(configFilePath)) {
+    Serial.println("Reading configuration...");
+    File configFile = SPIFFS.open(configFilePath, "r");
+  
+    if (configFile)
+    {
+      size_t size = configFile.size();
+      std::unique_ptr<char[]> jsonBuf(new char[size]);
+      configFile.readBytes(jsonBuf.get(), size);
+  
+      DynamicJsonBuffer jsonBuffer;
+      JsonObject& json = jsonBuffer.parseObject(jsonBuf.get());
+      
+      if (json.success())
+      {
+        calibration_factor = json["calibration_factor"];
+        Serial.print("Loaded value for 'calibration_factor': ");
+        Serial.println(calibration_factor);
+      } else {
+        Serial.println("Failed to load configuration.");
+      }
+      configFile.close();
+    }
+  }
+  else
   {
-    char temp = Serial.read();
-    
-    if(temp == '+') {
-      calibration_factor += 10;
-      Serial.print("Calibration factor increased to: ");
-      Serial.println(calibration_factor);
-    } else if(temp == '-') {
-      calibration_factor -= 10;
-      Serial.print("Calibration factor decreased to: ");
-      Serial.println(calibration_factor);
+    Serial.println("Failed to locate configuration file.");
+  }
+}
+
+void saveConfiguration()
+{
+  Serial.print("Saving configuration file: ");
+  Serial.println(configFilePath);
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& json = jsonBuffer.createObject();
+  
+  json["calibration_factor"] = calibration_factor;
+
+  File configFile = SPIFFS.open(configFilePath, "w");
+  
+  if (!configFile) {
+    Serial.println("Failed to open config file during save.");
+  }
+  
+  json.printTo(Serial);
+  json.printTo(configFile);
+  configFile.close();
+}
+
+void loop() {
+  scale.set_scale((float) calibration_factor);
+  scaleValue = scale.get_units() + 0.07F;
+
+  if (calibrationMode)
+  {
+    if(Serial.available())
+    {
+      char temp = Serial.read();
+      
+      if(temp == '+') {
+        calibration_factor += 1;
+        Serial.print("Calibration factor increased to: ");
+        Serial.println(calibration_factor);
+      } else if(temp == '-') {
+        calibration_factor -= 1;
+        Serial.print("Calibration factor decreased to: ");
+        Serial.println(calibration_factor);
+      } else if(temp == '.') {
+        calibration_factor += 10;
+        Serial.print("Calibration factor increased to: ");
+        Serial.println(calibration_factor);
+      } else if(temp == ',') {
+        calibration_factor -= 10;
+        Serial.print("Calibration factor decreased to: ");
+        Serial.println(calibration_factor);
+      } else if(temp == 'x') {
+        calibrationMode = false;
+        Serial.println("Calibration mode disabled.");
+      }
     }
   }
   
@@ -96,12 +175,25 @@ void loop() {
     if (command == "reset") {
       hardwareReset();
     }
+    if (command == "save_config") {
+      saveConfiguration();
+    }
+    if (command == "calibrate") {
+      calibrationMode = true;
+      Serial.println("Entered calibration mode.");
+      Serial.println("Use '+' or '-' to change the calibration factor by increments of 1.");
+      Serial.println("Use '.' or ',' to change the calibration factor by increments of 10.");
+      Serial.println("Once the correct calibration factor value has been found, send 'x' and run save_config.");
+    }
     if (command == "spiffs_format") {
       if(SPIFFS.format()){
         Serial.println("SPIFFS formatted successfully.");
       } else {
         Serial.println("SPIFFS format failiure.");
       }
+    }
+    if (command == "help") {
+      Serial.println("connect, disconnect, list_networks, reset, save_config, calibrate, spiffs_format");
     }
   }
 }
