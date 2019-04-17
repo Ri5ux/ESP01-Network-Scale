@@ -66,9 +66,9 @@ void loop() {
     char temp = Serial.read();
     
     if(temp == '+') {
+      calibration_factor += 10;
       Serial.print("Calibration factor increased to: ");
       Serial.println(calibration_factor);
-      calibration_factor += 10;
     } else if(temp == '-') {
       calibration_factor -= 10;
       Serial.print("Calibration factor decreased to: ");
