@@ -55,7 +55,7 @@ setInterval(function() {
         autoHoldButton.style.color = "#AAAAAA";
     }
 
-    var weightLbsOnly = Math.round(weight);
+    var weightLbsOnly = Math.floor(weight);
 
     if (!hold)
     {
