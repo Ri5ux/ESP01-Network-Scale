@@ -10,23 +10,27 @@ var autoHoldButton = document.getElementById("AutoHold");
 var holdButton = document.getElementById("Hold");
 var indicators = document.getElementById("ScaleIndicators");
 var footer = document.getElementById("Footer");
+var scaleReadVal = document.getElementById("ScaleWeightValue");
 var scaleWeight = document.getElementById("ScaleWeight");
 var scaleWeightOunces = document.getElementById("ScaleWeightOunces");
 
 setInterval(function() {
     var weight = 100.27;
     var ounces = 0;
+    var positive = true;
 
     if (url != null && url != "" && !url.includes("ESPVAL"))
     {
         weight = Number(httpGet(url));
+        positive = weight > 0;
     }
+    scaleReadVal.innerHTML = weight;
 
     if (weight % 1 != 0)
     {
         var remainder = weight % 1;
         ounces = remainder * 16;
-        ounces = Math.round(ounces);
+        ounces = Math.abs(Math.round(ounces));
     }
 
     if (autoHold)
@@ -55,7 +59,7 @@ setInterval(function() {
         autoHoldButton.style.color = "#AAAAAA";
     }
 
-    var weightLbsOnly = Math.floor(weight);
+    var weightLbsOnly = Math.floor(Math.abs(weight)) * (positive ? 1 : -1);
 
     if (!hold)
     {

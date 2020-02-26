@@ -39,9 +39,9 @@ boolean calibrationMode = false;
 
 void setup() {
   Serial.begin(74880);
-  Serial.println("Wireless Network Scale Firmware Version 1.0");
-  Serial.println("Copyright(C) 2019 ASX Electronics");
-  Serial.println("Designed and buily by Dustin Christensen");
+  Serial.println("Wireless Network Scale Firmware Version 1.1");
+  Serial.println("Copyright(C) 2019-2020 ASX Electronics");
+  Serial.println("Designed and built by Dustin Christensen");
   Serial.println();
 
   if(!SPIFFS.begin()){
@@ -123,13 +123,8 @@ void saveConfiguration()
 }
 
 void loop() {
-  scale.set_scale((float) calibration_factor);
-  scaleValue = scale.get_units() + 0.07F;
-
-  if (calibrationMode)
-  {
-    if(Serial.available())
-    {
+  if (Serial.available() > 0) {
+    if (calibrationMode) {
       char temp = Serial.read();
       
       if(temp == '+') {
@@ -153,14 +148,10 @@ void loop() {
         Serial.println("Calibration mode disabled.");
       }
     }
-  }
-  
-  if (Serial.available() > 0) {
     String command = Serial.readStringUntil(' ');
-    Serial.read();
     
     if (command == "connect") {
-      ssid = Serial.readStringUntil(' ');
+      ssid = Serial.readStringUntil(',');
       Serial.read(); 
       pswd = Serial.readStringUntil('\n');
       connectToNetwork();
@@ -196,6 +187,9 @@ void loop() {
       Serial.println("connect, disconnect, list_networks, reset, save_config, calibrate, spiffs_format");
     }
   }
+
+  scale.set_scale((float) calibration_factor);
+  scaleValue = scale.get_units() + 0.07F;
 }
 
 void connectToNetwork() {
@@ -235,21 +229,25 @@ void connectToNetwork() {
   else
   {
     listNetworks();
+    WiFi.disconnect();
   }
 }
 
 /** Scale **/
 void startScale() {
+  Serial.print("Initializing scale...");
   scale.begin(LOADCELL_DATA_PIN, LOADCELL_CLK_PIN);
   scale.set_scale();
   scale.tare();
   zero_factor = scale.read_average();
+  Serial.println("Complete");
 }
 
 /** Web Server **/
 
 void startWebServer() {
-  server.serveStatic("/client", SPIFFS, "/web/client");
+  Serial.print("Starting web server...");
+  server.serveStatic("/client/", SPIFFS, "/web/client/");
   server.serveStatic("/", SPIFFS, "/web/").setDefaultFile("index.html").setTemplateProcessor(processor);
   //server.serveStatic("/index.html", SPIFFS, "/web/index.html").setTemplateProcessor(processor);
   //server.serveStatic("/navigation.html", SPIFFS, "/web/navigation.html").setTemplateProcessor(processor);
@@ -267,6 +265,7 @@ void startWebServer() {
   });
    
   server.begin();
+  Serial.println("Complete");
 }
 
 String processor(const String& var)

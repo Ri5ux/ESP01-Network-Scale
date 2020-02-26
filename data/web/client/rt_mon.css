@@ -45,6 +45,9 @@ body {
 }
 #ScaleIndicators {
 }
+#ScaleWeightValue {
+    display: none;
+}
 .i {
     display: inline;
 }
