@@ -32,7 +32,7 @@ AsyncWebServer server(80);
 const int LOADCELL_DATA_PIN = 12;
 const int LOADCELL_CLK_PIN = 14;
 HX711 scale;
-int calibration_factor = -5480;
+int calibration_factor = -5410;
 float scaleValue;
 long zero_factor;
 boolean calibrationMode = false;
