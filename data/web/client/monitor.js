@@ -30,7 +30,7 @@ setInterval(function() {
     {
         var remainder = weight % 1;
         ounces = remainder * 16;
-        ounces = Math.abs(Math.round(ounces));
+        ounces = Math.abs(Math.floor(ounces));
     }
 
     if (autoHold)
