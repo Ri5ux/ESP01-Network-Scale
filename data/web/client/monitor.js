@@ -1,6 +1,6 @@
 loadColor();
 
-var rate = 250;
+var rate = 500;
 var timerMax = 3;
 var timer = -1;
 var dark = false;
